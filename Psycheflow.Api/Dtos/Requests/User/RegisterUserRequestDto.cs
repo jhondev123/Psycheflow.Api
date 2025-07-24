@@ -1,0 +1,16 @@
+﻿using System.Text.Json.Serialization;
+
+namespace Psycheflow.Api.Dtos.Requests.User
+{
+    public sealed class  RegisterUserRequestDto
+    {
+        [JsonPropertyName("company_id")]
+        public Guid? CompanyId { get; set; }
+
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+    }
+}
