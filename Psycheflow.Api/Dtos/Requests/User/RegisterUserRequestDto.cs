@@ -2,7 +2,7 @@
 
 namespace Psycheflow.Api.Dtos.Requests.User
 {
-    public sealed class  RegisterUserRequestDto
+    public sealed class RegisterUserRequestDto
     {
         [JsonPropertyName("company_id")]
         public Guid? CompanyId { get; set; }
@@ -12,5 +12,9 @@ namespace Psycheflow.Api.Dtos.Requests.User
 
         [JsonPropertyName("password")]
         public string Password { get; set; }
+
+        [JsonPropertyName("role_name")]
+        public string? RoleName { get; set; } = string.Empty;
+
     }
 }

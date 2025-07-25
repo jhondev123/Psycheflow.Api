@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Company;
 using Psycheflow.Api.Dtos.Responses;

@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
-using Psycheflow.Api.Interfaces;
+using Psycheflow.Api.Interfaces.Services;
 using Psycheflow.Api.Services;
+using Psycheflow.Api.UseCases.Users;
 using System.Text;
 
 namespace Psycheflow.Api.Extensions
@@ -26,7 +27,14 @@ namespace Psycheflow.Api.Extensions
         }
         public static void ConfigureDependencies(this IServiceCollection services)
         {
+            #region [ SERVICES ]
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
+            #endregion
+
+            #region [ USE CASES ]
+            services.AddScoped<RegisterUserUseCase>();
+            #endregion
         }
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {

@@ -5,7 +5,8 @@ using Psycheflow.Api.Dtos.Requests.Company;
 using Psycheflow.Api.Dtos.Requests.User;
 using Psycheflow.Api.Dtos.Responses;
 using Psycheflow.Api.Entities;
-using Psycheflow.Api.Interfaces;
+using Psycheflow.Api.Interfaces.Services;
+using Psycheflow.Api.UseCases.Users;
 
 namespace Psycheflow.Api.Controllers
 {
@@ -17,37 +18,32 @@ namespace Psycheflow.Api.Controllers
         private UserManager<User> UserManager { get; set; }
         private SignInManager<User> SigningManager { get; set; }
         private ITokenService TokenService { get; set; }
+        private RegisterUserUseCase RegisterUserUseCase { get; set; }
         public UserController(
-            AppDbContext context, 
+            AppDbContext context,
             UserManager<User> manager,
             SignInManager<User> signingManager,
-            ITokenService tokenService
+            ITokenService tokenService,
+            RegisterUserUseCase registerUserUseCase
             )
         {
             Context = context;
             UserManager = manager;
             SigningManager = signingManager;
             TokenService = tokenService;
+            RegisterUserUseCase = registerUserUseCase;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequestDto requestDto)
         {
-            User user = new User
+            GenericResponseDto<User?> responseDto = await RegisterUserUseCase.Execute(requestDto, requestDto.Password);
+            if (!responseDto.Success)
             {
-                UserName = requestDto.Email,
-                Email = requestDto.Email,
-                CompanyId = (Guid)requestDto.CompanyId!
-            };
-
-            IdentityResult result = await UserManager.CreateAsync(user, requestDto.Password);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(GenericResponseDto<object>.ToFail($"Erro ao criar um usuário {result.Errors.First().Description}"));
+                return BadRequest(responseDto);
             }
 
-            return Ok(GenericResponseDto<User>.ToSuccess("Usuário criado com sucesso",user));
+            return Ok(responseDto);
         }
 
         [HttpPost("login")]
@@ -64,11 +60,11 @@ namespace Psycheflow.Api.Controllers
             {
                 return Unauthorized(GenericResponseDto<object>.ToFail("Usuário ou senha inválidos"));
             }
+            List<string> roles = (await UserManager.GetRolesAsync(user)).ToList();
 
-            string token = TokenService.GenerateToken(user);
+            string token = TokenService.GenerateToken(user, roles);
 
             return Ok(GenericResponseDto<object>.ToSuccess("Login realizado com sucesso", new { token }));
         }
-
     }
 }
