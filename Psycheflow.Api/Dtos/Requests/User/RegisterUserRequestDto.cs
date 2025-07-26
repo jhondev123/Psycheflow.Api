@@ -15,6 +15,8 @@ namespace Psycheflow.Api.Dtos.Requests.User
 
         [JsonPropertyName("role_name")]
         public string? RoleName { get; set; } = string.Empty;
+        [JsonPropertyName("license_number")]
+        public string? LicenseNumber { get; set; } = string.Empty;
 
     }
 }

@@ -14,6 +14,9 @@ namespace Psycheflow.Api.Dtos.Requests.Admin
         [JsonPropertyName("role_name")]
         public string RoleName { get; set; }
 
+        [JsonPropertyName("license_number")]
+        public string? LicenseNumber { get; set; } = string.Empty;
+
         public static explicit operator RegisterUserRequestDto(CreateUserRequestDto dto)
         {
             return new RegisterUserRequestDto 
@@ -21,6 +24,7 @@ namespace Psycheflow.Api.Dtos.Requests.Admin
                 CompanyId = dto.CompanyId,
                 Email = dto.Email,
                 RoleName = dto.RoleName,               
+                LicenseNumber = dto.LicenseNumber,
             };
         }
     }

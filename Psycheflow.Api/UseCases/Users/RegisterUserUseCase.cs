@@ -3,6 +3,7 @@ using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.User;
 using Psycheflow.Api.Dtos.Responses;
 using Psycheflow.Api.Entities;
+using Psycheflow.Api.Enums;
 
 namespace Psycheflow.Api.UseCases.Users
 {
@@ -19,6 +20,11 @@ namespace Psycheflow.Api.UseCases.Users
         {
             try
             {
+                if (!Enum.TryParse(dto.RoleName, ignoreCase: true, out Role role))
+                {
+                    throw new Exception("Role inválida");
+                }
+
                 await Context.Database.BeginTransactionAsync();
                 User user = new User
                 {
@@ -34,6 +40,10 @@ namespace Psycheflow.Api.UseCases.Users
                 }
 
                 await SaveUserRole(user, dto.RoleName);
+
+                await SaveUserType(user, dto, role);
+
+                await Context.SaveChangesAsync();
 
                 await Context.Database.CommitTransactionAsync();
 
@@ -55,6 +65,35 @@ namespace Psycheflow.Api.UseCases.Users
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
+            }
+        }
+        private async Task SaveUserType(User user, RegisterUserRequestDto dto, Role role)
+        {
+            Psychologist? psychologist = null;
+            if (role == Role.Psychologist)
+            {
+                if(string.IsNullOrEmpty(dto.LicenseNumber))
+                {
+                    throw new Exception("Para cadastrar um psicólogo é necessário o número da licensa");
+                }
+                psychologist = new Psychologist
+                {
+                    UserId = user.Id,
+                    CompanyId = user.CompanyId,
+                    LicenseNumber = new Entities.ValueObjects.LicenseNumber(dto.LicenseNumber)
+                };
+                await Context.AddAsync(psychologist);
+            }
+
+            Patient? patient = null;
+            if (role == Role.Patient)
+            {
+                patient = new Patient
+                {
+                    CompanyId = user.CompanyId,
+                    UserId = user.Id,
+                };
+                await Context.AddAsync(patient);
             }
         }
     }

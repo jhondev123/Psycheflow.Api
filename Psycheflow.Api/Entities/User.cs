@@ -7,8 +7,8 @@ namespace Psycheflow.Api.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
         public DateTime BirthDate { get; set; }
-        public DateTimeOffset? CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
-        public DateTimeOffset? DeletedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }

@@ -25,6 +25,42 @@ namespace Psycheflow.Api.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
+            #region [ BASE ENTITY ]
+
+            modelBuilder.Ignore<BaseEntity>();
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    var entity = modelBuilder.Entity(entityType.ClrType);
+
+                    entity.Property<DateTime>("CreatedAt")
+                          .HasDefaultValueSql("GETUTCDATE()")
+                          .ValueGeneratedOnAdd();
+
+                    entity.Property<DateTime?>("UpdatedAt")
+                          .HasDefaultValueSql("GETUTCDATE()")
+                          .ValueGeneratedOnUpdate();
+                    entity.Property<DateTime?>("DeletedAt");
+                }
+            }
+            #endregion
+
+            #region [ USER ]
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property<DateTime>("CreatedAt")
+                      .HasDefaultValueSql("GETUTCDATE()")
+                      .ValueGeneratedOnAdd();
+
+                entity.Property<DateTime?>("UpdatedAt")
+                      .HasDefaultValueSql("GETUTCDATE()")
+                      .ValueGeneratedOnUpdate();
+                entity.Property<DateTime?>("DeletedAt");
+            });
+            #endregion
+
             #region [ Company ]
             modelBuilder.Entity<Company>(entity =>
             {
@@ -35,25 +71,24 @@ namespace Psycheflow.Api.Contexts
             #region [ PSYCHOLOGIST ]
 
 
-
             modelBuilder.Entity<Psychologist>(entity =>
-            {
-                entity.HasKey(p => p.Id);
+        {
+            entity.HasKey(p => p.Id);
 
-                entity.Property(p => p.LicenseNumber)
-                    .HasConversion(
-                        v => v.Value,
-                        v => new LicenseNumber(v)
-                    )
-                    .HasMaxLength(20)
-                    .IsRequired();
+            entity.Property(p => p.LicenseNumber)
+                .HasConversion(
+                    v => v.Value,
+                    v => new LicenseNumber(v)
+                )
+                .HasMaxLength(20)
+                .IsRequired();
 
-                entity.HasOne(p => p.User)
-                .WithMany()
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.User)
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            });
+        });
 
             #endregion
 
