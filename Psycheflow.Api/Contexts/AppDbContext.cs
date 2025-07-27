@@ -92,15 +92,25 @@ namespace Psycheflow.Api.Contexts
 
             #endregion
 
-            #region [ PSYCHOLOGIST HOURS ]
+            modelBuilder.Entity<PsychologistHours>(entity =>
+            {
+                entity.HasOne(ph => ph.Psychologist)
+                      .WithMany(p => p.PsychologistHours)
+                      .HasForeignKey(ph => ph.PsychologistId)
+                      .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<PsychologistHours>()
-            .HasOne(ph => ph.Psychologist)
-            .WithMany(p => p.PsychologistHours)
-            .HasForeignKey(ph => ph.PsychologistId)
-            .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(ph => ph.DayOfWeek)
+                      .HasConversion<int>()
+                      .IsRequired();
 
-            #endregion
+                entity.Property(ph => ph.StartTime)
+                      .HasColumnType("time")
+                      .IsRequired();
+
+                entity.Property(ph => ph.EndTime)
+                      .HasColumnType("time")
+                      .IsRequired();
+            });
 
             #region [ Schedules ]
             modelBuilder.Entity<Schedule>()

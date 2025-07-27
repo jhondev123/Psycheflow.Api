@@ -10,6 +10,7 @@ using Psycheflow.Api.Entities;
 using Psycheflow.Api.Enums;
 using Psycheflow.Api.Interfaces.Services;
 using Psycheflow.Api.UseCases.Users;
+using Psycheflow.Api.Utils;
 using System.Security.Claims;
 
 namespace Psycheflow.Api.Controllers
@@ -51,7 +52,12 @@ namespace Psycheflow.Api.Controllers
 
                 string userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
 
-                User requestUser = Context.Users.Find(userId)!;
+                User? requestUser = await GetUserRequester.Execute(Context,this);
+                if(requestUser == null)
+                {
+                    throw new Exception("Usuário não encontrdo");
+                }
+
                 requestDto.CompanyId = requestUser.CompanyId;
 
                 GenericResponseDto<User?> responseDto = await RegisterUserUseCase.Execute((RegisterUserRequestDto)requestDto, randomPassword);
