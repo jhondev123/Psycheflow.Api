@@ -29,7 +29,7 @@ namespace Psycheflow.Api.UseCases.Schedules
                 ScheduleStatus scheduleStatus = ScheduleStatus.Pending;
                 if (dto.Status != null)
                 {
-                    if(!Enum.IsDefined(typeof(ScheduleStatus), dto.Status))
+                    if (!Enum.IsDefined(typeof(ScheduleStatus), dto.Status))
                     {
                         throw new InvalidOperationException("O type é inválido");
                     }
@@ -38,12 +38,23 @@ namespace Psycheflow.Api.UseCases.Schedules
                 }
 
                 Schedule schedule = new Schedule(dto.Date, dto.Start, dto.End, dto.PsychologistId, scheduleType, user.CompanyId, scheduleStatus);
+
+                if(!await VerifyPsychologistWorkInThisHour(schedule))
+                {
+                    throw new Exception("O psicólogo não trabalha nesse horário");
+                }
+
+                if (!await VerifyHourIsAvaliable(schedule))
+                {
+                    throw new Exception("Este horário já possui outros agendamentos");
+                }
+
                 await Context.AddAsync(schedule);
                 await Context.SaveChangesAsync();
 
                 if (scheduleType == ScheduleTypes.SESSION)
                 {
-                    if(dto.SessionData == null)
+                    if (dto.SessionData == null)
                     {
                         throw new Exception("Os dados para criar a sessão não foram encontrados");
                     }
@@ -72,6 +83,26 @@ namespace Psycheflow.Api.UseCases.Schedules
             Session session = new Session(schedule.PsychologistId, patient.Id, schedule.Id, schedule.CompanyId, SessionStatus.Scheduled);
             await Context.AddAsync(session);
             await Context.SaveChangesAsync();
+        }
+        private async Task<bool> VerifyHourIsAvaliable(Schedule schedule)
+        {
+            Schedule? scheduleFinded = await Context.Schedules.FirstOrDefaultAsync(
+                x => x.Date.Date == schedule.Date.Date &&
+                x.Start == schedule.Start &&
+                x.End == schedule.End
+            );
+            return scheduleFinded == null;
+        }
+        private async Task<bool> VerifyPsychologistWorkInThisHour(Schedule schedule)
+        {
+            PsychologistHours? hours = await Context.PsychologistsHours.FirstOrDefaultAsync(
+                x => x.DayOfWeek == schedule.Date.DayOfWeek &&
+                     x.PsychologistId == schedule.PsychologistId &&
+                     x.StartTime <= schedule.Start &&
+                     x.EndTime >= schedule.End
+            );
+
+            return hours != null;
         }
     }
 }

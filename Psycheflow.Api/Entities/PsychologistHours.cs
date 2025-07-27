@@ -11,7 +11,7 @@ namespace Psycheflow.Api.Entities
         [JsonIgnore] // Prevent circular reference
         public Psychologist Psychologist { get; set; }
         public Guid PsychologistId { get; set; }
-        public WeekDay DayOfWeek { get; set; }  
+        public DayOfWeek DayOfWeek { get; set; }  
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
 

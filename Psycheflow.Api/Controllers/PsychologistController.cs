@@ -89,7 +89,7 @@ namespace Psycheflow.Api.Controllers
                         {
                             PsychologistId = psychologistId,
                             CompanyId = requestUser.CompanyId,
-                            DayOfWeek = (WeekDay)dayOfWeek,
+                            DayOfWeek = (DayOfWeek)dayOfWeek,
                             StartTime = start,
                             EndTime = end,
                         };
