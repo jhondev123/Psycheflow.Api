@@ -1,4 +1,5 @@
 ﻿using Psycheflow.Api.Enums;
+using System.Text.Json.Serialization;
 
 namespace Psycheflow.Api.Entities
 {
@@ -7,6 +8,7 @@ namespace Psycheflow.Api.Entities
         public Company Company { get; set; }
         public Guid CompanyId { get; set; }
 
+        [JsonIgnore] // Prevent circular reference
         public Psychologist Psychologist { get; set; }
         public Guid PsychologistId { get; set; }
         public WeekDay DayOfWeek { get; set; }  
