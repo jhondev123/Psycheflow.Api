@@ -70,28 +70,27 @@ namespace Psycheflow.Api.Contexts
 
             #region [ PSYCHOLOGIST ]
 
-
             modelBuilder.Entity<Psychologist>(entity =>
-        {
-            entity.HasKey(p => p.Id);
+            {
+                entity.HasKey(p => p.Id);
 
-            entity.Property(p => p.LicenseNumber)
-                .HasConversion(
-                    v => v.Value,
-                    v => new LicenseNumber(v)
-                )
-                .HasMaxLength(20)
-                .IsRequired();
+                entity.Property(p => p.LicenseNumber)
+                    .HasConversion(
+                        v => v.Value,
+                        v => new LicenseNumber(v)
+                    )
+                    .HasMaxLength(20)
+                    .IsRequired();
 
-            entity.HasOne(p => p.User)
-            .WithMany()
-            .HasForeignKey(p => p.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        });
+                entity.HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
 
             #endregion
 
+            #region [ PSYCHOLOGIST HOURS ]
             modelBuilder.Entity<PsychologistHours>(entity =>
             {
                 entity.HasOne(ph => ph.Psychologist)
@@ -111,25 +110,41 @@ namespace Psycheflow.Api.Contexts
                       .HasColumnType("time")
                       .IsRequired();
             });
+            #endregion
 
             #region [ Schedules ]
-            modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Psychologist)
-                .WithMany(p => p.Schedules)
-                .HasForeignKey(s => s.PsychologistId)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.HasOne(s => s.Psychologist)
+                      .WithMany(p => p.Schedules)
+                      .HasForeignKey(s => s.PsychologistId)
+                      .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Patient)
-                .WithMany(p => p.Schedules)
-                .HasForeignKey(s => s.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(s => s.Company)
+                      .WithMany(c => c.Schedules)
+                      .HasForeignKey(s => s.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Company)
-                .WithMany(c => c.Schedules)
-                .HasForeignKey(s => s.CompanyId)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(s => s.ScheduleTypes)
+                      .HasConversion<int>()
+                      .IsRequired();
+
+                entity.Property(s => s.ScheduleStatus)
+                      .HasConversion<int>()
+                      .IsRequired();
+
+                entity.Property(s => s.Id).HasColumnOrder(0);
+                entity.Property(s => s.CompanyId).HasColumnOrder(1);
+                entity.Property(s => s.PsychologistId).HasColumnOrder(2);
+                entity.Property(s => s.Date).HasColumnOrder(3);
+                entity.Property(s => s.Start).HasColumnOrder(4);
+                entity.Property(s => s.End).HasColumnOrder(5);
+                entity.Property(s => s.ScheduleTypes).HasColumnOrder(6);
+                entity.Property(s => s.ScheduleStatus).HasColumnOrder(7);
+                entity.Property(s => s.CreatedAt).HasColumnOrder(98);
+                entity.Property(s => s.UpdatedAt).HasColumnOrder(99);
+                entity.Property(s => s.DeletedAt).HasColumnOrder(100);
+            });
             #endregion
 
             #region [ Sessions ]
@@ -156,6 +171,27 @@ namespace Psycheflow.Api.Contexts
                 .WithMany(c => c.Sessions)
                 .HasForeignKey(s => s.CompanyId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Session>(entity =>
+            {
+                entity.Property(s => s.SessionStatus)
+                  .HasConversion<int>()
+                  .IsRequired();
+
+                entity.Property(s => s.Id).HasColumnOrder(0);
+                entity.Property(s => s.CompanyId).HasColumnOrder(1);
+                entity.Property(s => s.ScheduleId).HasColumnOrder(2);
+                entity.Property(s => s.PsychologistId).HasColumnOrder(3);
+                entity.Property(s => s.PatientId).HasColumnOrder(4);
+                entity.Property(s => s.Feedback).HasColumnOrder(5);
+                entity.Property(s => s.Description).HasColumnOrder(6);
+                entity.Property(s => s.SessionStatus).HasColumnOrder(7);
+                entity.Property(s => s.CreatedAt).HasColumnOrder(98);
+                entity.Property(s => s.UpdatedAt).HasColumnOrder(99);
+                entity.Property(s => s.DeletedAt).HasColumnOrder(100);
+
+            });
+
             #endregion
 
             #region [ PATIENT ]

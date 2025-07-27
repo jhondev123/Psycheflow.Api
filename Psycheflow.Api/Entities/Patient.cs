@@ -7,7 +7,6 @@
         public Company Company { get; set; }
         public Guid CompanyId { get; set; }
 
-        public ICollection<Schedule> Schedules { get; set; }
         public ICollection<Session> Sessions { get; set; }
 
         public Patient()

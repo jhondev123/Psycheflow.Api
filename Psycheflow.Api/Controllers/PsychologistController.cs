@@ -121,7 +121,7 @@ namespace Psycheflow.Api.Controllers
             User? requestUser = await GetUserRequester.Execute(Context, this);
             if (requestUser == null)
             {
-                throw new Exception("Usuário não encontrdo");
+                throw new Exception("Usuário não encontrado");
             }
 
             Psychologist? psychologist = await Context.Psychologists

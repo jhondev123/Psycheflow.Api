@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Psycheflow.Api.Contexts;
 
@@ -11,9 +12,11 @@ using Psycheflow.Api.Contexts;
 namespace Psycheflow.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250727194323_FixingScheduleFieldsAndSession")]
+    partial class FixingScheduleFieldsAndSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -352,51 +355,40 @@ namespace Psycheflow.Api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(0);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(98)
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(3);
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(100);
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeSpan>("End")
-                        .HasColumnType("time")
-                        .HasColumnOrder(5);
+                        .HasColumnType("time");
 
                     b.Property<Guid>("PsychologistId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(2);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ScheduleStatus")
-                        .HasColumnType("int")
-                        .HasColumnOrder(7);
+                        .HasColumnType("int");
 
                     b.Property<int>("ScheduleTypes")
-                        .HasColumnType("int")
-                        .HasColumnOrder(6);
+                        .HasColumnType("int");
 
                     b.Property<TimeSpan>("Start")
-                        .HasColumnType("time")
-                        .HasColumnOrder(4);
+                        .HasColumnType("time");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnUpdate()
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(99)
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("Id");
@@ -412,53 +404,42 @@ namespace Psycheflow.Api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(0);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(98)
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(100);
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnOrder(6);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Feedback")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnOrder(5);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(4);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PsychologistId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(3);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ScheduleId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(2);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SessionStatus")
-                        .HasColumnType("int")
-                        .HasColumnOrder(7);
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnUpdate()
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(99)
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("Id");

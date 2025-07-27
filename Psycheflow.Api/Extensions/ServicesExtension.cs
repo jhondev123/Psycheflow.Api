@@ -6,6 +6,7 @@ using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Interfaces.Services;
 using Psycheflow.Api.Services;
+using Psycheflow.Api.UseCases.Schedules;
 using Psycheflow.Api.UseCases.Users;
 using System.Text;
 
@@ -34,6 +35,7 @@ namespace Psycheflow.Api.Extensions
 
             #region [ USE CASES ]
             services.AddScoped<RegisterUserUseCase>();
+            services.AddScoped<CreateScheduleUseCase>();
             #endregion
         }
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
