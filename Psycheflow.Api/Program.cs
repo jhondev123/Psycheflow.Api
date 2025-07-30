@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Extensions;
+using Psycheflow.Api.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,19 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+// seeding
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+
+    AppDbContext context = services.GetRequiredService<AppDbContext>();
+    RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    DatabaseSeeder seeder = new DatabaseSeeder(context, roleManager);
+    await seeder.Seeding();
+}
+
 
 
 // Configure the HTTP request pipeline.
