@@ -10,6 +10,9 @@ namespace Psycheflow.Api.Seeders
     {
         private AppDbContext Context { get; set; }
         private RoleManager<IdentityRole> RoleManager { get; set; }
+
+        public bool onlyHomolog => false;
+
         public RoleSeeder(AppDbContext context, RoleManager<IdentityRole> roleManager) 
         {
             Context = context;

@@ -29,7 +29,8 @@ using (IServiceScope scope = app.Services.CreateScope())
     RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
     DatabaseSeeder seeder = new DatabaseSeeder(context, roleManager);
-    await seeder.Seeding();
+    bool isHomolog = bool.TryParse(builder.Configuration["ENV"], out bool result) && result;
+    await seeder.Seeding(isHomolog);
 }
 
 

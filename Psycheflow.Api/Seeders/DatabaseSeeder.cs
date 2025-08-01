@@ -19,11 +19,14 @@ namespace Psycheflow.Api.Seeders
         {
             Seeders.Add(new RoleSeeder (Context, RoleManager));
         }
-        public async Task Seeding()
+        public async Task Seeding(bool isHomolog)
         {
             foreach (ISeeder seeder in Seeders)
             {
-                await seeder.Up();
+                if (isHomolog || !seeder.onlyHomolog)
+                {
+                    await seeder.Up();
+                }
             }
         }
         public async Task DesSeeding()
