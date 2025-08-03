@@ -12,7 +12,7 @@ namespace Psycheflow.Api.Controllers
     {
         public AppDbContext Context { get; set; }
         public CompanyController(AppDbContext context) { Context = context; }
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCompanyRequestDto requestDto)
         {
             try

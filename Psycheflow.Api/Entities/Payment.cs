@@ -7,18 +7,18 @@
         public bool Paid { get; set; }
         public DateTime Date { get; private set; }
         public string Description { get; set; }
-        public Guid ScheduleId { get; set; }
-        public Schedule Schedule { get; set; }
+        public Guid SessionId { get; set; }
+        public Session Session { get; set; }
         public Payment() { }
 
-        public Payment(decimal value, decimal amountPaid, bool paid, DateTime date, string description, Guid scheduleId)
+        public Payment(decimal value, decimal amountPaid, bool paid, DateTime date, string description, Guid sessionId)
         {
             SetValue(value);
             SetAmountPaid(amountPaid);
             Paid = paid;
             SetDate(date);
             Description = description;
-            ScheduleId = scheduleId;
+            SessionId = sessionId;
         }
         public void SetValue(decimal value)
         {
