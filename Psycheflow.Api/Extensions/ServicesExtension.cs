@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
+using Psycheflow.Api.Interfaces;
+using Psycheflow.Api.Interfaces.ReportExporteres;
 using Psycheflow.Api.Interfaces.Services;
 using Psycheflow.Api.Services;
+using Psycheflow.Api.Services.Exporters.PdfExporter;
 using Psycheflow.Api.UseCases.Schedules;
 using Psycheflow.Api.UseCases.Users;
 using System.Text;
@@ -31,6 +34,9 @@ namespace Psycheflow.Api.Extensions
             #region [ SERVICES ]
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
+            services.AddScoped<IReportExporter, ReportExporter>();
+            services.AddScoped<IPdfExporter, QuestPdfExporter>();
+
             #endregion
 
             #region [ USE CASES ]

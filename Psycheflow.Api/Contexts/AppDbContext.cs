@@ -16,6 +16,9 @@ namespace Psycheflow.Api.Contexts
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentField> DocumentFields { get; set; }
+        public DbSet<ExportFormat> ExportFormats { get; set; }
         #endregion
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -202,9 +205,103 @@ namespace Psycheflow.Api.Contexts
             .OnDelete(DeleteBehavior.Restrict);
 
             #endregion
+
             #region [ Payments ]
             #endregion
+
+            #region [ DOCUMENT ]
+
+            modelBuilder.Entity<Document>(entity =>
+            {
+                entity.ToTable("Documents");
+
+                entity.HasKey(d => d.Id);
+
+                entity.Property(d => d.Name)
+                      .IsRequired()
+                      .HasMaxLength(200);
+
+                entity.Property(d => d.Description)
+                      .HasMaxLength(500);
+
+                entity.HasOne(d => d.Company)
+                      .WithMany()
+                      .HasForeignKey(d => d.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(d => d.Fields)
+                      .WithOne(f => f.Document)
+                      .HasForeignKey(f => f.DocumentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(d => d.ExportFormats)
+                      .WithOne(ef => ef.Document)
+                      .HasForeignKey(ef => ef.DocumentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            #endregion
+            #region [ DOCUMENT FIELD ]
+
+            modelBuilder.Entity<DocumentField>(entity =>
+            {
+                entity.ToTable("DocumentFields");
+
+                entity.HasKey(f => f.Id);
+
+                entity.Property(f => f.Name)
+                      .IsRequired()
+                      .HasMaxLength(150);
+
+                entity.Property(f => f.FieldType)
+                      .IsRequired();
+
+                entity.Property(f => f.Order)
+                      .IsRequired();
+
+                entity.Property(f => f.IsRequired)
+                      .IsRequired();
+
+                entity.Property(f => f.DefaultValue)
+                      .HasMaxLength(500);
+
+                entity.HasOne(f => f.Document)
+                      .WithMany(d => d.Fields)
+                      .HasForeignKey(f => f.DocumentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            #endregion
+
+            #region [ EXPORT FORMATS ]
+
+            modelBuilder.Entity<ExportFormat>(entity =>
+            {
+                entity.ToTable("ExportFormats");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Name)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.Extesion)
+                      .IsRequired()
+                      .HasMaxLength(10);
+
+                entity.Property(e => e.MimeType)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.HasOne(e => e.Document)
+                      .WithMany(d => d.ExportFormats)
+                      .HasForeignKey(e => e.DocumentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
+        #endregion
     }
+
 }
+
