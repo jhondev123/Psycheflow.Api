@@ -6,7 +6,7 @@ using Psycheflow.Api.Interfaces.ReportExporteres;
 
 namespace Psycheflow.Api.Services
 {
-    public class ReportExporter : IReportExporter
+    public class ReportExporter : IDocumentExporter
     {
         public IPdfExporter PdfExporter { get; set; }
         public ExporterFactory ExporterFactory { get; set; }

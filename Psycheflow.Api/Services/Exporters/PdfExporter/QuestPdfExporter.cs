@@ -20,7 +20,6 @@ namespace Psycheflow.Api.Services.Exporters.PdfExporter
         {
             IQuestPdfDocument template = TemplateFactory.GetTemplate(document.Name);
             return template.GenerateAsync(document);
-
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Psycheflow.Api.Extensions
             #region [ SERVICES ]
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
-            services.AddScoped<IReportExporter, ReportExporter>();
+            services.AddScoped<IDocumentExporter, ReportExporter>();
             services.AddScoped<IPdfExporter, QuestPdfExporter>();
 
             #endregion
