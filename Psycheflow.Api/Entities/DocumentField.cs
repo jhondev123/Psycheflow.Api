@@ -9,6 +9,8 @@
         public int Order { get; set; }
         public bool IsRequired { get; set; }
         public string DefaultValue { get; set; }
+        public string Value { get; set; } = string.Empty;
+
         public DocumentField() { }
     }
 }

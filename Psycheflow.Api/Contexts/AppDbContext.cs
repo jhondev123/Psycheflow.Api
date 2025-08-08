@@ -241,6 +241,7 @@ namespace Psycheflow.Api.Contexts
             });
 
             #endregion
+
             #region [ DOCUMENT FIELD ]
 
             modelBuilder.Entity<DocumentField>(entity =>
@@ -269,6 +270,9 @@ namespace Psycheflow.Api.Contexts
                       .WithMany(d => d.Fields)
                       .HasForeignKey(f => f.DocumentId)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Ignore(f => f.Value);
+
             });
 
             #endregion
