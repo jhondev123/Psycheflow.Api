@@ -18,7 +18,7 @@ namespace Psycheflow.Api.Contexts
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentField> DocumentFields { get; set; }
-        public DbSet<ExportFormat> ExportFormats { get; set; }
+
         #endregion
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -231,6 +231,39 @@ namespace Psycheflow.Api.Contexts
             });
 
             #endregion
+
+            #region [ DOCUMENT FIELD ]
+
+            modelBuilder.Entity<DocumentField>(entity =>
+            {
+                entity.ToTable("DocumentFields");
+
+                entity.HasKey(f => f.Id);
+
+                entity.Property(f => f.Name)
+                      .IsRequired()
+                      .HasMaxLength(150);
+
+                entity.Property(f => f.FieldType)
+                      .IsRequired();
+
+                entity.Property(f => f.Order)
+                      .IsRequired();
+
+                entity.Property(f => f.IsRequired)
+                      .IsRequired();
+
+                entity.Property(f => f.DefaultValue)
+                      .HasMaxLength(500);
+
+                entity.HasOne(f => f.Document)
+                      .WithMany(d => d.Fields)
+                      .HasForeignKey(f => f.DocumentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Ignore(f => f.Value);
+
+            });
 
         }
 
