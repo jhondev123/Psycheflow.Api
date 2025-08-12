@@ -6,17 +6,17 @@ using Psycheflow.Api.Interfaces;
 
 namespace Psycheflow.Api.Services
 {
-    public class DocumentExporter : IDocumentExporter
+    public class FastReportExporter : IDocumentExporter
     {
         public string DocumentPath { get; set; }
         public IConfiguration Configuration { get; set; }
-        public DocumentExporter(IConfiguration configuration)
+        public FastReportExporter(IConfiguration configuration)
         {
             DocumentPath = Path.Combine(Directory.GetCurrentDirectory(), $@"Documents\");
             Configuration = configuration;
         }
 
-        public async Task<byte[]> Export(object data, Document document)
+        public async Task<byte[]> Export(Document document)
         {
             DocumentPath = Path.Combine(DocumentPath, $@"{document.TemplateName}");
 
