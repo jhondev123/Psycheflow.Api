@@ -1,6 +1,7 @@
 ﻿using FastReport;
 using FastReport.Data;
 using FastReport.Export.PdfSimple;
+using FastReport.Utils;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Interfaces;
 
@@ -22,15 +23,17 @@ namespace Psycheflow.Api.Services
 
             Report report = new Report();
 
+            RegisteredObjects.AddConnection(typeof(MsSqlDataConnection));
+
             report.Load(DocumentPath);
 
             LoadDataSourcesConnection(report);
 
-            report.Prepare();
-
             ValidateReportParameters(report, document);
 
             LoadDocumentParameters(report, document);
+
+            report.Prepare();
 
             using MemoryStream memoryStream = new MemoryStream();
             using PDFSimpleExport pdfExport = new PDFSimpleExport();
