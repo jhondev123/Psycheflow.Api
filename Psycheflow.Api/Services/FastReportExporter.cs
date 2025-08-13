@@ -21,6 +21,7 @@ namespace Psycheflow.Api.Services
             DocumentPath = Path.Combine(DocumentPath, $@"{document.TemplateName}");
 
             Report report = new Report();
+
             report.Load(DocumentPath);
 
             LoadDataSourcesConnection(report);

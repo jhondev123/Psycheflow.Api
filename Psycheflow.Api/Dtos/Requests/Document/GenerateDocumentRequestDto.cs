@@ -3,7 +3,7 @@
     public class GenerateDocumentRequestDto
     {
         public Guid? DocumentId { get; set; } = null;
-        public int DocumentFormat { get; set; } = 1;
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
 
     }
 }

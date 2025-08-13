@@ -24,5 +24,9 @@
         {
             return new GenericResponseDto<T>(message, false, data);
         }
+        public static GenericResponseDto<T> ToException(Exception ex, T? data = default)
+        {
+            return new GenericResponseDto<T>(ex.Message, false, data);
+        }
     }
 }

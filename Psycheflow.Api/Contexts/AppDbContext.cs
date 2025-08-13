@@ -244,9 +244,6 @@ namespace Psycheflow.Api.Contexts
                       .IsRequired()
                       .HasMaxLength(150);
 
-                entity.Property(f => f.FieldType)
-                      .IsRequired();
-
                 entity.Property(f => f.Order)
                       .IsRequired();
 
@@ -265,10 +262,9 @@ namespace Psycheflow.Api.Contexts
 
             });
 
+            #endregion
+
         }
-
-        #endregion
-
     }
 
 }
