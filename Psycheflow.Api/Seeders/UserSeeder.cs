@@ -30,6 +30,7 @@ namespace Psycheflow.Api.Seeders
 
 
             };
+            throw new NotImplementedException();
         }
         public Task Down()
         {
