@@ -37,9 +37,9 @@ namespace Psycheflow.Api.Controllers
 
             if (genericResponseDto.Success == false)
             {
-                return Ok(genericResponseDto);
+                return BadRequest(genericResponseDto);
             }
-            return BadRequest(genericResponseDto);
+            return Ok(genericResponseDto);
         }
     }
 }

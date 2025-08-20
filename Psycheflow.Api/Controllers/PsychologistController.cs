@@ -39,7 +39,7 @@ namespace Psycheflow.Api.Controllers
 
             if (psychologist == null)
             {
-                return NotFound(GenericResponseDto<object?>.ToFail($"Psicólogo com o não encontrado"));
+                return NotFound(GenericResponseDto<object?>.ToFail($"Psicólogo com o id {id} não encontrado"));
             }
             return Ok(psychologist);
         }
