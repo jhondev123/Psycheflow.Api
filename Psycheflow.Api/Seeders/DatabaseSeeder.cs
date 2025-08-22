@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Psycheflow.Api.Contexts;
+using Psycheflow.Api.Entities;
 
 namespace Psycheflow.Api.Seeders
 {
@@ -8,16 +9,19 @@ namespace Psycheflow.Api.Seeders
         private AppDbContext Context { get; set; }
         private List<ISeeder> Seeders { get; set; } = new List<ISeeder>();
         private RoleManager<IdentityRole> RoleManager { get; set; }
-        public DatabaseSeeder (AppDbContext context, RoleManager<IdentityRole> role)
+        private UserManager<User> UserManager { get; set; }
+        public DatabaseSeeder(AppDbContext context, RoleManager<IdentityRole> role, UserManager<User> userManager)
         {
             Context = context;
             RoleManager = role;
+            UserManager = userManager;
 
             addSeedings();
         }
         private void addSeedings()
         {
-            Seeders.Add(new RoleSeeder (Context, RoleManager));
+            Seeders.Add(new RoleSeeder(Context, RoleManager));
+            Seeders.Add(new HomologSeeder(Context, UserManager));
         }
         public async Task Seeding(bool isHomolog)
         {
