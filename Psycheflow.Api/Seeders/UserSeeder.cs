@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
 
@@ -14,7 +15,7 @@ namespace Psycheflow.Api.Seeders
         {
             Context = context;
         }
-        public Task Up()
+        public async Task Up()
         {
             User user = new User
             {
@@ -25,16 +26,14 @@ namespace Psycheflow.Api.Seeders
                 CompanyId = new Guid("149e039e-e59e-46db-8b5c-e8294ae4a69f"),
                 BirthDate = DateTime.Now,
                 PasswordHash = "AQAAAAIAAYagAAAAEJzKBFfdRz3qSX7whKQYjlaNBlskzX6Tnena89xHax78SZWeYc+/pO8rR8wsl19bpg==",
-                
-                
-
-
+                               
             };
-            throw new NotImplementedException();
+            await Context.Users.AddAsync(user);
+            await Context.SaveChangesAsync();
         }
-        public Task Down()
+        public async Task Down()
         {
-            throw new NotImplementedException();
+            await Context.Users.ExecuteDeleteAsync();
         }
     }
 }
