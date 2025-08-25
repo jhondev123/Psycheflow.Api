@@ -21,7 +21,7 @@ namespace Psycheflow.Api.Seeders
         private void addSeedings()
         {
             Seeders.Add(new RoleSeeder(Context, RoleManager));
-            Seeders.Add(new HomologSeeder(Context, UserManager));
+            Seeders.Add(new HomologSeeder(Context, UserManager,10));
         }
         public async Task Seeding(bool isHomolog)
         {
