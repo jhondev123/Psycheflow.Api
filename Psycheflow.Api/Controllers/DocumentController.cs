@@ -6,6 +6,7 @@ using Psycheflow.Api.Dtos.Responses;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Enums;
 using Psycheflow.Api.Interfaces;
+using Psycheflow.Api.Utils;
 
 namespace Psycheflow.Api.Controllers
 {
@@ -27,7 +28,6 @@ namespace Psycheflow.Api.Controllers
         [HttpPost("Generate")]
         public async Task<IActionResult> GenerateDocument([FromBody] GenerateDocumentRequestDto dto)
         {
-
             try
             {
                 if (dto.DocumentId == null)
@@ -83,6 +83,32 @@ namespace Psycheflow.Api.Controllers
             {
                 return BadRequest(GenericResponseDto<object>.ToException(ex));
             }
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> SearchDocuments()
+        {
+            User? requestUser = await GetUserRequester.Execute(Context, this);
+            if (requestUser == null)
+            {
+                throw new Exception("Usuário não encontrado");
+            }
+
+            List<Document> documents = await Context.Documents.Where(x => x.CompanyId == requestUser.CompanyId || x.CompanyId == null)
+                .Include(x => x.Fields)
+                .ToListAsync();
+
+            return Ok(GenericResponseDto<List<Document>>.ToSuccess("Documentos encontrados", documents));
+        }
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetDocumentById([FromRoute] Guid id)
+        {
+            Document? document = await Context.Documents.FirstOrDefaultAsync(x => x.Id == id);
+            if (document is null)
+            {
+                return BadRequest(GenericResponseDto<object>.ToFail($"Documento com o Id {id} não encontrado"));
+            }
+            return Ok(GenericResponseDto<Document>.ToSuccess("Documento encontrado", document));
         }
     }
 }
