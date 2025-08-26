@@ -4,7 +4,7 @@ using Psycheflow.Api.Entities;
 using Psycheflow.Api.Extensions;
 using Psycheflow.Api.Seeders;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // configurações personalizadas
 builder.Services.ConfigurePersistenceApp(builder.Configuration);
@@ -18,21 +18,11 @@ builder.Services.AddSwaggerGen();
 
 
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-// seeding
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider services = scope.ServiceProvider;
+app.ConfigureMiddlewares();
 
-    AppDbContext context = services.GetRequiredService<AppDbContext>();
-    RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    UserManager<User> userManager = services.GetRequiredService<UserManager<User>>();
-
-    DatabaseSeeder seeder = new DatabaseSeeder(context, roleManager, userManager);
-    bool isHomolog = bool.TryParse(builder.Configuration["ENV"], out bool result) && result;
-    await seeder.Seeding(isHomolog);
-}
+await app.ConfigureSeeders();
 
 
 
