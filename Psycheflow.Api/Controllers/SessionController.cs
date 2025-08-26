@@ -5,6 +5,7 @@ using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Session;
 using Psycheflow.Api.Dtos.Responses;
 using Psycheflow.Api.Entities;
+using Psycheflow.Api.Utils;
 
 namespace Psycheflow.Api.Controllers
 {
@@ -31,7 +32,7 @@ namespace Psycheflow.Api.Controllers
             {
                 return NotFound(GenericResponseDto<object>.ToFail($"Sessão com o Id {id} não encontrada"));
             }
-            return Ok(GenericResponseDto<Session>.ToSuccess("Sessão encontrada",session));
+            return Ok(GenericResponseDto<Session>.ToSuccess("Sessão encontrada", session));
         }
 
         [HttpPost("complete")]
@@ -45,7 +46,7 @@ namespace Psycheflow.Api.Controllers
             session.Feedback = dto.Feedback;
             session.Description = dto.Description;
             session.SessionStatus = Enums.SessionStatus.Completed;
-            
+
             await Context.SaveChangesAsync();
 
             return Ok(GenericResponseDto<Session>.ToSuccess("Sessão completada com sucesso", session));
@@ -64,5 +65,22 @@ namespace Psycheflow.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateById([FromRoute] Guid id, [FromBody] UpdateSessionRequestDto dto)
+        {
+            Session? session = await Context.Sessions.FirstOrDefaultAsync(s => s.Id == id);
+            if (session is null)
+            {
+                return NotFound(GenericResponseDto<object>.ToFail($"Sessão com o Id {id} não encontrada"));
+            }
+            UpdateEntityHandler.Update(dto, session);
+
+            await Context.SaveChangesAsync();
+
+            return Ok(GenericResponseDto<Session>.ToSuccess("Sessão atualizada com sucesso",session));
+        }
+
+
     }
 }
