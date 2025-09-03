@@ -3,6 +3,7 @@ using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Entities;
+using Psycheflow.Api.Entities.Configs;
 
 namespace Psycheflow.Api.Seeders
 {
@@ -177,6 +178,34 @@ namespace Psycheflow.Api.Seeders
                     };
                     await Context.AddAsync(session);
                     await Context.SaveChangesAsync();
+
+                    #endregion
+
+                    #region [ INSERINDO CONFIG ]
+                    Config config = new Config
+                    {
+                        CompanyId = company.Id,
+                        Key = ConfigKey.EnableAI.Value,
+                        Description = "Configuração para habilitar e configurar IA",
+                        Value = null
+                    };
+                    await Context.AddAsync(config);
+                    await Context.SaveChangesAsync();
+
+                    #region [ INSERINDO CONFIG AI ]
+
+                    ConfigAi configAi = new ConfigAi
+                    {
+                        ConfigId = config.Id,
+                        IsEnabled = true,
+                        MaxTokens = 1000,
+                        Provider = "provider",
+                        Temperature = 0,                        
+                    };
+                    await Context.AddAsync(configAi);
+                    await Context.SaveChangesAsync();
+
+                    #endregion
 
                     #endregion
                 }

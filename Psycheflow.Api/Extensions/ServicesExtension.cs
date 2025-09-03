@@ -33,7 +33,7 @@ namespace Psycheflow.Api.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
             services.AddScoped<IDocumentExporter, FastReportExporter>();
-
+            services.AddScoped<ConfigService>();
             #endregion
 
             #region [ USE CASES ]
