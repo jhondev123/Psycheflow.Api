@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Psycheflow.Api.Entities.Configs;
 
 namespace Psycheflow.Api.Entities
 {
@@ -10,5 +11,7 @@ namespace Psycheflow.Api.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+
+        public ICollection<Config> Configs { get; set; }
     }
 }

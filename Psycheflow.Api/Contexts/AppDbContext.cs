@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using FastReport.Utils;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Entities;
+using Psycheflow.Api.Entities.Configs;
 using Psycheflow.Api.Entities.ValueObjects;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Psycheflow.Api.Contexts
 {
@@ -18,6 +19,8 @@ namespace Psycheflow.Api.Contexts
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentField> DocumentFields { get; set; }
+        public DbSet<Entities.Configs.Config> Configs { get; set; }
+        public DbSet<ConfigAi> ConfigAis { get; set; }
 
         #endregion
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -264,6 +267,52 @@ namespace Psycheflow.Api.Contexts
 
             #endregion
 
+            #region [ CONFIG ]
+
+            modelBuilder.Entity<Entities.Configs.Config>(entity =>
+            {
+                entity.ToTable("Config");
+
+                entity.HasKey(c => c.Id);
+
+                entity.Property(c => c.Key)
+                      .HasMaxLength(255)
+                      .IsRequired();
+
+                // Constraint única (CompanyId, UserId, Key)
+                entity.HasIndex(c => new { c.CompanyId, c.UserId, c.Key })
+                      .IsUnique()
+                      .HasDatabaseName("UQ_Config");
+
+                // Relacionamentos
+                entity.HasOne(c => c.Company)
+                      .WithMany(co => co.Configs)
+                      .HasForeignKey(c => c.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(c => c.User)
+                      .WithMany(u => u.Configs)
+                      .HasForeignKey(c => c.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            #region [ CONFIG AI ]
+            // tabela de ConfigAi
+
+            modelBuilder.Entity<ConfigAi>(entity =>
+            {
+                entity.ToTable("ConfigAi");
+
+                entity.HasKey(ai => ai.Id);
+
+                entity.HasOne(ai => ai.Config)
+                      .WithOne(c => c.ConfigAi)
+                      .HasForeignKey<ConfigAi>(ai => ai.ConfigId);
+            });
+
+            #endregion
+
+            #endregion
         }
     }
 
