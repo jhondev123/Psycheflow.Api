@@ -14,8 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Development", "Development"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{860A849C-DBC5-45EE-A8A4-E54871AB5DA4}"
 	ProjectSection(SolutionItems) = preProject
-		.env.appsetting.json = .env.appsetting.json
 		.gitignore = .gitignore
+		env.appsettings.json = env.appsettings.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Psycheflow.Api.Tests", "Psycheflow.Api.Tests\Psycheflow.Api.Tests.csproj", "{989DEB33-CC38-43B4-9101-FAC689DB9ED7}"
