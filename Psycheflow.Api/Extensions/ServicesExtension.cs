@@ -17,9 +17,9 @@ namespace Psycheflow.Api.Extensions
     {
         public static void ConfigurePersistenceApp(this IServiceCollection services, IConfiguration configuration)
         {
-            string? connectionString = configuration.GetConnectionString("SqlServer");
+            string? connectionString = configuration.GetConnectionString("Postgres");
 
-            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString));
+            services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(connectionString));
         }
         public static void ConfigureIdentityEndpoints(this IServiceCollection services)
         {
@@ -30,10 +30,12 @@ namespace Psycheflow.Api.Extensions
         public static void ConfigureDependencies(this IServiceCollection services)
         {
             #region [ SERVICES ]
+
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
             services.AddScoped<IDocumentExporter, FastReportExporter>();
             services.AddScoped<ConfigService>();
+
             #endregion
 
             #region [ USE CASES ]

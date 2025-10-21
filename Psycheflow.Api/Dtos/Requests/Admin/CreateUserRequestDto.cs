@@ -17,6 +17,9 @@ namespace Psycheflow.Api.Dtos.Requests.Admin
         [JsonPropertyName("license_number")]
         public string? LicenseNumber { get; set; } = string.Empty;
 
+        [JsonPropertyName("password")]
+        public string? Password { get; set; } = string.Empty;
+
         public static explicit operator RegisterUserRequestDto(CreateUserRequestDto dto)
         {
             return new RegisterUserRequestDto 

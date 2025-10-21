@@ -18,5 +18,9 @@
             UserId = userId;
             CompanyId = companyId;
         }
+        public string GetName()
+        {
+            return User?.UserName ?? string.Empty;
+        }
     }
 }

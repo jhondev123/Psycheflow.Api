@@ -11,12 +11,12 @@ namespace Psycheflow.Api.UseCases.Users
     {
         private UserManager<User> UserManager { get; set; }
         private AppDbContext Context { get; set; }
-        public RegisterUserUseCase(UserManager<User> userManager,AppDbContext context)
+        public RegisterUserUseCase(UserManager<User> userManager, AppDbContext context)
         {
             UserManager = userManager;
             Context = context;
         }
-        public async Task<GenericResponseDto<User?>> Execute(RegisterUserRequestDto dto, string password)
+        public async Task<GenericResponseDto<object?>> Execute(RegisterUserRequestDto dto, string password)
         {
             try
             {
@@ -41,18 +41,31 @@ namespace Psycheflow.Api.UseCases.Users
 
                 await SaveUserRole(user, dto.RoleName);
 
-                await SaveUserType(user, dto, role);
+                Psychologist? psychologist = null;
+                if (role == Role.Psychologist)
+                {
+                    psychologist = await SavePsychologist(user, dto);
+                }
+                Patient? patient = null;
+                if (role == Role.Patient)
+                {
+                    patient = await SavePatient(user);
+                }
 
                 await Context.SaveChangesAsync();
-
                 await Context.Database.CommitTransactionAsync();
 
-                return GenericResponseDto<User?>.ToSuccess("Usuário criado com sucesso", user);
+                return GenericResponseDto<object?>.ToSuccess("Usuário criado com sucesso", new
+                {
+                    user,
+                    patient = patient,
+                    psychologist = psychologist
+                });
             }
             catch (Exception ex)
             {
                 await Context.Database.RollbackTransactionAsync();
-                return GenericResponseDto<User?>.ToFail($"Erro ao criar o usuário: {ex.Message}", null);
+                return GenericResponseDto<object?>.ToFail($"Erro ao criar o usuário: {ex.Message}", null);
             }
         }
 
@@ -67,34 +80,30 @@ namespace Psycheflow.Api.UseCases.Users
                 }
             }
         }
-        private async Task SaveUserType(User user, RegisterUserRequestDto dto, Role role)
+        private async Task<Psychologist> SavePsychologist(User user, RegisterUserRequestDto dto)
         {
-            Psychologist? psychologist = null;
-            if (role == Role.Psychologist)
+            if (string.IsNullOrEmpty(dto.LicenseNumber))
             {
-                if(string.IsNullOrEmpty(dto.LicenseNumber))
-                {
-                    throw new Exception("Para cadastrar um psicólogo é necessário o número da licensa");
-                }
-                psychologist = new Psychologist
-                {
-                    UserId = user.Id,
-                    CompanyId = user.CompanyId,
-                    LicenseNumber = new Entities.ValueObjects.LicenseNumber(dto.LicenseNumber)
-                };
-                await Context.AddAsync(psychologist);
+                throw new Exception("Para cadastrar um psicólogo é necessário o número da licensa");
             }
-
-            Patient? patient = null;
-            if (role == Role.Patient)
+            Psychologist psychologist = new Psychologist
             {
-                patient = new Patient
-                {
-                    CompanyId = user.CompanyId,
-                    UserId = user.Id,
-                };
-                await Context.AddAsync(patient);
-            }
+                UserId = user.Id,
+                CompanyId = user.CompanyId,
+                LicenseNumber = new Entities.ValueObjects.LicenseNumber(dto.LicenseNumber)
+            };
+            await Context.AddAsync(psychologist);
+            return psychologist;
+        }
+        private async Task<Patient> SavePatient(User user)
+        {
+            Patient patient = new Patient
+            {
+                CompanyId = user.CompanyId,
+                UserId = user.Id,
+            };
+            await Context.AddAsync(patient);
+            return patient;
         }
     }
 }

@@ -96,8 +96,8 @@ namespace Psycheflow.Api.Seeders
                         {
                             CompanyId = company.Id,
                             PsychologistId = psychologist.Id,
-                            StartTime = TimeSpan.Parse("08:00"),
-                            EndTime = TimeSpan.Parse("18:00"),
+                            StartTime = TimeOnly.Parse("08:00"),
+                            EndTime = TimeOnly.Parse("18:00"),
                             DayOfWeek = (DayOfWeek)j,
                         };
                         await Context.AddAsync(psychologistHours);
@@ -156,8 +156,8 @@ namespace Psycheflow.Api.Seeders
                         PsychologistId = psychologist.Id,
                         ScheduleStatus = Enums.ScheduleStatus.Pending,
                         ScheduleTypes = Enums.ScheduleTypes.SESSION,
-                        Start = TimeSpan.FromHours(10),
-                        End = TimeSpan.FromHours(11)
+                        Start = new TimeOnly(10, 0, 0),
+                        End = new TimeOnly(11, 0, 0)
                     };
                     await Context.AddAsync(schedule);
                     await Context.SaveChangesAsync();

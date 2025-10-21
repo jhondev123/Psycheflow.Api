@@ -48,7 +48,15 @@ namespace Psycheflow.Api.Controllers
         {
             try
             {
-                string randomPassword = PasswordGeneratorService.GeneratePassword();
+                string password = string.Empty;
+                if (string.IsNullOrEmpty(requestDto.Password))
+                {
+                    password = PasswordGeneratorService.GeneratePassword();
+                }
+                else
+                {
+                    password = requestDto.Password;
+                }
 
                 string userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
 
@@ -60,7 +68,7 @@ namespace Psycheflow.Api.Controllers
 
                 requestDto.CompanyId = requestUser.CompanyId;
 
-                GenericResponseDto<User?> responseDto = await RegisterUserUseCase.Execute((RegisterUserRequestDto)requestDto, randomPassword);
+                GenericResponseDto<object?> responseDto = await RegisterUserUseCase.Execute((RegisterUserRequestDto)requestDto, password);
                 if (!responseDto.Success || responseDto.Data == null)
                 {
                     throw new Exception(responseDto.Message);
@@ -69,6 +77,7 @@ namespace Psycheflow.Api.Controllers
                 return Ok(GenericResponseDto<object>.ToSuccess("Usuário criado com sucesso",new
                 {
                     user = responseDto.Data,
+                    password = password
                 }));
             }
             catch (Exception ex)

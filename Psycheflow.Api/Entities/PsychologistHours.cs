@@ -12,14 +12,14 @@ namespace Psycheflow.Api.Entities
         public Psychologist Psychologist { get; set; }
         public Guid PsychologistId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }  
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
 
         public PsychologistHours()
         {
         }
 
-        public PsychologistHours(Guid companyId, Guid psychologistId, TimeSpan startTime, TimeSpan endTime)
+        public PsychologistHours(Guid companyId, Guid psychologistId, TimeOnly startTime, TimeOnly endTime)
         {
             CompanyId = companyId;
             PsychologistId = psychologistId;

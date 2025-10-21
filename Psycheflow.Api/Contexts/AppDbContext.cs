@@ -42,12 +42,15 @@ namespace Psycheflow.Api.Contexts
                     var entity = modelBuilder.Entity(entityType.ClrType);
 
                     entity.Property<DateTime>("CreatedAt")
-                          .HasDefaultValueSql("GETUTCDATE()")
+                          .HasColumnType("timestamp")                
+                          .HasDefaultValueSql("CURRENT_TIMESTAMP")   
                           .ValueGeneratedOnAdd();
 
                     entity.Property<DateTime?>("UpdatedAt")
-                          .HasDefaultValueSql("GETUTCDATE()")
+                          .HasColumnType("timestamp")
+                          .HasDefaultValueSql("CURRENT_TIMESTAMP")
                           .ValueGeneratedOnUpdate();
+
                     entity.Property<DateTime?>("DeletedAt");
                 }
             }
@@ -57,11 +60,13 @@ namespace Psycheflow.Api.Contexts
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property<DateTime>("CreatedAt")
-                      .HasDefaultValueSql("GETUTCDATE()")
+                      .HasColumnType("timestamp")                 
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP")   
                       .ValueGeneratedOnAdd();
 
                 entity.Property<DateTime?>("UpdatedAt")
-                      .HasDefaultValueSql("GETUTCDATE()")
+                      .HasColumnType("timestamp")
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP")
                       .ValueGeneratedOnUpdate();
                 entity.Property<DateTime?>("DeletedAt");
             });
@@ -138,6 +143,9 @@ namespace Psycheflow.Api.Contexts
                 entity.Property(s => s.ScheduleStatus)
                       .HasConversion<int>()
                       .IsRequired();
+
+                entity.Property(s => s.Date)
+                  .HasColumnType("timestamp");
 
                 entity.Property(s => s.Id).HasColumnOrder(0);
                 entity.Property(s => s.CompanyId).HasColumnOrder(1);

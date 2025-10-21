@@ -37,7 +37,7 @@ namespace Psycheflow.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequestDto requestDto)
         {
-            GenericResponseDto<User?> responseDto = await RegisterUserUseCase.Execute(requestDto, requestDto.Password);
+            GenericResponseDto<object?> responseDto = await RegisterUserUseCase.Execute(requestDto, requestDto.Password);
             if (!responseDto.Success)
             {
                 return BadRequest(responseDto);

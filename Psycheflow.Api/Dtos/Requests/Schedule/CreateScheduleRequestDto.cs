@@ -7,9 +7,9 @@ namespace Psycheflow.Api.Dtos.Requests.Schedule
         [JsonPropertyName("date")]
         public DateTime Date { get; set; }
         [JsonPropertyName("start")]
-        public TimeSpan Start { get; set; }
+        public TimeOnly Start { get; set; }
         [JsonPropertyName("end")]
-        public TimeSpan End { get; set; }
+        public TimeOnly End { get; set; }
         [JsonPropertyName("psychologist_id")]
         public Guid PsychologistId { get; set; }
         [JsonPropertyName("type")]

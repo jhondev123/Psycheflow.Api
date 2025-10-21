@@ -5,8 +5,8 @@ namespace Psycheflow.Api.Entities
     public class Schedule : BaseEntity
     {
         public DateTime Date { get; set; }
-        public TimeSpan Start { get; set; }
-        public TimeSpan End { get; set; }
+        public TimeOnly Start { get; set; }
+        public TimeOnly End { get; set; }
 
         public Guid PsychologistId { get; set; }
         public Psychologist Psychologist { get; set; }
@@ -22,7 +22,7 @@ namespace Psycheflow.Api.Entities
         {
         }
 
-        public Schedule(DateTime date, TimeSpan start, TimeSpan end, Guid psychologistId, ScheduleTypes scheduleTypes, Guid companyId,ScheduleStatus scheduleStatus)
+        public Schedule(DateTime date, TimeOnly start, TimeOnly end, Guid psychologistId, ScheduleTypes scheduleTypes, Guid companyId,ScheduleStatus scheduleStatus)
         {
             Date = date;
             ValideteDate();

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Psychologist;
 using Psycheflow.Api.Dtos.Responses;
+using Psycheflow.Api.Dtos.Responses.Psychologist;
 using Psycheflow.Api.Dtos.Utils;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Enums;
@@ -31,17 +32,50 @@ namespace Psycheflow.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            Psychologist? psychologist = await Context.Psychologists
-                .Include(x => x.PsychologistHours)
-                .Include(x => x.Schedules)
-                .Include(x => x.Sessions)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            GetByIdPsychologistResponseDto? psychologist = await GetByIdPsychologistResponseDto(id);
 
             if (psychologist == null)
             {
                 return NotFound(GenericResponseDto<object?>.ToFail($"Psicólogo com o id {id} não encontrado"));
             }
             return Ok(psychologist);
+        }
+
+        private async Task<GetByIdPsychologistResponseDto?> GetByIdPsychologistResponseDto(Guid id)
+        {
+            return await Context.Psychologists
+            .Where(x => x.Id == id)
+            .Select(p => new GetByIdPsychologistResponseDto
+            {
+                Id = p.Id,
+                Name = p.User.UserName,
+                LicenseNumber = p.LicenseNumber.Value,
+                ApproachType = p.Approach.ToString(),
+                CompanyId = p.CompanyId.ToString(),
+                Hours = p.PsychologistHours.Select(h => new GetByIdPsychologistHourResponseDto
+                {
+                    DayOfWeek = h.DayOfWeek.ToString(),
+                    DayOfWeekNumber = (int)h.DayOfWeek,
+                    StartTime = h.StartTime,
+                    EndTime = h.EndTime
+                }),
+                Schedules = p.Schedules.Select(s => new GetByIdPsychologistScheduleResponseDto
+                {
+                    Date = s.Date,
+                    StartTime = s.Start,
+                    EndTime = s.End,
+                    ScheduleStatus = s.ScheduleStatus.ToString(),
+                    ScheduleType = s.ScheduleTypes.ToString()
+                }),
+                Sessions = p.Sessions.Select(s => new GetByIdPsychologistSessionsResponseDto
+                {
+                    Description = s.Description,
+                    Feedback = s.Feedback,
+                    PatientId = s.PatientId.ToString(),
+                    PatientName = s.Patient.User.UserName ?? ""
+                })
+            })
+            .FirstOrDefaultAsync();
         }
 
         [HttpPost("working/hours")]
@@ -73,11 +107,11 @@ namespace Psycheflow.Api.Controllers
                 {
                     foreach (TimeRangeDto range in dto.Hours[dayOfWeek])
                     {
-                        if (!TimeSpan.TryParse(range.Start, out TimeSpan start))
+                        if (!TimeOnly.TryParse(range.Start, out TimeOnly start))
                         {
                             throw new Exception($"O Horário {range.Start} está inválido");
                         }
-                        if (!TimeSpan.TryParse(range.End, out TimeSpan end))
+                        if (!TimeOnly.TryParse(range.End, out TimeOnly end))
                         {
                             throw new Exception($"O Horário {range.End} está inválido");
                         }
@@ -124,10 +158,8 @@ namespace Psycheflow.Api.Controllers
                 throw new Exception("Usuário não encontrado");
             }
 
-            Psychologist? psychologist = await Context.Psychologists
-            .Include(x => x.PsychologistHours)
-            .Include(x => x.Schedules)
-            .FirstOrDefaultAsync(x => x.Id == psychologistId);
+            GetByIdPsychologistResponseDto? psychologist = await GetByIdPsychologistResponseDto(psychologistId);
+
             if (psychologist == null)
             {
                 return NotFound(GenericResponseDto<object?>.ToFail($"Psicólogo com o não encontrado"));
@@ -137,7 +169,7 @@ namespace Psycheflow.Api.Controllers
             .Where(s => s.Date >= startDate && s.Date <= endDate)
             .ToList();
 
-            return Ok(GenericResponseDto<Psychologist>.ToSuccess("Lista de horários",psychologist));
+            return Ok(GenericResponseDto<GetByIdPsychologistResponseDto>.ToSuccess("Lista de horários", psychologist));
         }
     }
 }
