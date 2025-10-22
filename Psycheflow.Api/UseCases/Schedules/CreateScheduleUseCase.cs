@@ -39,7 +39,7 @@ namespace Psycheflow.Api.UseCases.Schedules
 
                 Schedule schedule = new Schedule(dto.Date, dto.Start, dto.End, dto.PsychologistId, scheduleType, user.CompanyId, scheduleStatus);
 
-                if(!await VerifyPsychologistWorkInThisHour(schedule))
+                if (!await VerifyPsychologistWorkInThisHour(schedule))
                 {
                     throw new Exception("O psicólogo não trabalha nesse horário");
                 }
@@ -86,12 +86,14 @@ namespace Psycheflow.Api.UseCases.Schedules
         }
         private async Task<bool> VerifyHourIsAvaliable(Schedule schedule)
         {
-            Schedule? scheduleFinded = await Context.Schedules.FirstOrDefaultAsync(
-                x => x.Date.Date == schedule.Date.Date &&
-                x.Start == schedule.Start &&
-                x.End == schedule.End
+            return !await Context.Schedules.AnyAsync(x =>
+                x.PsychologistId == schedule.PsychologistId &&
+                x.Date.Date == schedule.Date.Date &&
+                x.ScheduleStatus != ScheduleStatus.Cancelled &&
+                ((schedule.Start >= x.Start && schedule.Start < x.End) ||
+                 (schedule.End > x.Start && schedule.End <= x.End) ||
+                 (schedule.Start <= x.Start && schedule.End >= x.End))
             );
-            return scheduleFinded == null;
         }
         private async Task<bool> VerifyPsychologistWorkInThisHour(Schedule schedule)
         {
