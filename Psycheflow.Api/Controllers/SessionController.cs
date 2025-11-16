@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Session;
 using Psycheflow.Api.Dtos.Responses;
+using Psycheflow.Api.Dtos.Responses.Sessions;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Utils;
 
@@ -21,18 +22,32 @@ namespace Psycheflow.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            Session? session = await Context.Sessions.Where(s => s.Id == id)
-                .Include(x => x.Schedule)
-                .Include(x => x.Patient)
-                .Include(x => x.Psychologist)
-                .Include(x => x.Company)
+            GetSessionByIdResponseDto? sessionDto = await Context.Sessions
+                .Where(s => s.Id == id)
+                .Select(s => new GetSessionByIdResponseDto
+                {
+                    Description = s.Description,
+                    Feedback = s.Feedback,
+                    SessionId = s.Id,
+                    PsychologistId = s.PsychologistId,
+                    PsychologistName = s.Psychologist.User.NormalizedUserName!,
+                    PatientId = s.PatientId,
+                    PatientName = s.Patient.User.NormalizedUserName ?? string.Empty,
+                    ScheduleId = s.ScheduleId,
+                    ScheduleDate = s.Schedule.Date,
+                    ScheduleStart = s.Schedule.Start,
+                    ScheduleEnd = s.Schedule.End,
+                    CompanyId = s.CompanyId,
+                    CompanyName = s.Company.Name,
+                    Status = s.SessionStatus
+                })
                 .FirstOrDefaultAsync();
 
-            if (session is null)
+            if (sessionDto is null)
             {
                 return NotFound(GenericResponseDto<object>.ToFail($"Sessão com o Id {id} não encontrada"));
             }
-            return Ok(GenericResponseDto<Session>.ToSuccess("Sessão encontrada", session));
+            return Ok(GenericResponseDto<GetSessionByIdResponseDto>.ToSuccess("Sessão encontrada", sessionDto));
         }
 
         [HttpPost("complete")]

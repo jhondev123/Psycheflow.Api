@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Schedule;
 using Psycheflow.Api.Dtos.Responses;
+using Psycheflow.Api.Dtos.Responses.Schedule;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.UseCases.Schedules;
 using Psycheflow.Api.Utils;
@@ -34,7 +35,7 @@ namespace Psycheflow.Api.Controllers
                 throw new Exception("Usuário não encontrado");
             }
 
-            GenericResponseDto<Schedule?> genericResponseDto = await CreateScheduleUseCase.Execute(requestDto, requestUser);
+            GenericResponseDto<CreateScheduleResponseDto?> genericResponseDto = await CreateScheduleUseCase.Execute(requestDto, requestUser);
 
             if (genericResponseDto.Success == false)
             {

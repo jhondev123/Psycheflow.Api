@@ -1,4 +1,5 @@
 ﻿using Psycheflow.Api.Enums;
+using System.Text.Json.Serialization;
 
 namespace Psycheflow.Api.Entities
 {

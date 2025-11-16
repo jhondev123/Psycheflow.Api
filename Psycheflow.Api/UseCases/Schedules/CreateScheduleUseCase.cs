@@ -2,6 +2,7 @@
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Schedule;
 using Psycheflow.Api.Dtos.Responses;
+using Psycheflow.Api.Dtos.Responses.Schedule;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Enums;
 
@@ -14,7 +15,7 @@ namespace Psycheflow.Api.UseCases.Schedules
         {
             Context = context;
         }
-        public async Task<GenericResponseDto<Schedule?>> Execute(CreateScheduleRequestDto dto, User user)
+        public async Task<GenericResponseDto<CreateScheduleResponseDto?>> Execute(CreateScheduleRequestDto dto, User user)
         {
             try
             {
@@ -52,6 +53,7 @@ namespace Psycheflow.Api.UseCases.Schedules
                 await Context.AddAsync(schedule);
                 await Context.SaveChangesAsync();
 
+                Session? session = null;
                 if (scheduleType == ScheduleTypes.SESSION)
                 {
                     if (dto.SessionData == null)
@@ -63,11 +65,22 @@ namespace Psycheflow.Api.UseCases.Schedules
                     {
                         throw new Exception("O paciente não foi encontrado");
                     }
-                    await CreateSession(schedule, patient);
+                    session = await CreateSession(schedule, patient);
                 }
 
                 await Context.Database.CommitTransactionAsync();
-                return GenericResponseDto<Schedule?>.ToSuccess("Agendamento criado com sucesso", schedule);
+                return GenericResponseDto<CreateScheduleResponseDto?>.ToSuccess("Agendamento criado com sucesso", new CreateScheduleResponseDto
+                {
+                    Id = schedule.Id,
+                    Date = schedule.Date,
+                    Start = schedule.Start,
+                    End = schedule.End,
+                    PsychologistId = schedule.PsychologistId,
+                    Type = (int)schedule.ScheduleTypes,
+                    Status = (int)schedule.ScheduleStatus,
+                    CompanyId = schedule.CompanyId,
+                    SessionId = session?.Id
+                });
             }
             catch (Exception ex)
             {
@@ -75,14 +88,17 @@ namespace Psycheflow.Api.UseCases.Schedules
                 {
                     await Context.Database.RollbackTransactionAsync();
                 }
-                return GenericResponseDto<Schedule?>.ToFail($"Erro ao criar um agendamento {ex.Message}", null);
+                return GenericResponseDto<CreateScheduleResponseDto?>.ToFail($"Erro ao criar um agendamento {ex.Message}", null);
             }
         }
-        private async Task CreateSession(Schedule schedule, Patient patient)
+        private async Task<Session> CreateSession(Schedule schedule, Patient patient)
         {
             Session session = new Session(schedule.PsychologistId, patient.Id, schedule.Id, schedule.CompanyId, SessionStatus.Scheduled);
+
             await Context.AddAsync(session);
             await Context.SaveChangesAsync();
+
+            return session;
         }
         private async Task<bool> VerifyHourIsAvaliable(Schedule schedule)
         {
