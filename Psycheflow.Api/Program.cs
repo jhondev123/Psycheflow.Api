@@ -22,7 +22,7 @@ WebApplication app = builder.Build();
 
 app.ConfigureMiddlewares();
 
-await app.ConfigureSeeders();
+//await app.ConfigureSeeders();
 
 
 

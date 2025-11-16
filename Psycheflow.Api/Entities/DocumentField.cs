@@ -1,7 +1,10 @@
-﻿namespace Psycheflow.Api.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Psycheflow.Api.Entities
 {
     public class DocumentField : BaseEntity
     {
+        [JsonIgnore]
         public Document Document { get; set; }
         public Guid DocumentId { get; set; }
         public string Name { get; set; }

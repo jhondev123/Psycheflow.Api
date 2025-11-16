@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Document;
+using Psycheflow.Api.Dtos.Requests.Document.CreateDocument;
 using Psycheflow.Api.Dtos.Responses;
 using Psycheflow.Api.Entities;
 using Psycheflow.Api.Enums;
@@ -23,6 +24,47 @@ namespace Psycheflow.Api.Controllers
             DocumentExporter = exporter;
             Context = context;
 
+
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> CreateDocument([FromBody] CreateDocumentRequestDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.Name))
+            {
+                return BadRequest(GenericResponseDto<object>.ToFail($"O parametro {nameof(dto.Name)} é obrigatório"));
+            }
+            if (string.IsNullOrEmpty(dto.TemplateName))
+            {
+                return BadRequest(GenericResponseDto<object>.ToFail($"O parametro {nameof(dto.TemplateName)} é obrigatório"));
+            }
+            Document document = new Document
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                TemplateName = dto.TemplateName,
+                CompanyId = dto.CompanyId,
+                Fields = dto.Fields.Select(f => new DocumentField
+                {
+                    Name = f.Name,
+                    IsRequired = f.IsRequired,
+                    DefaultValue = f.DefaultValue
+                }).ToList()
+            };
+            try
+            {
+                await Context.Database.BeginTransactionAsync();
+
+                await Context.Documents.AddAsync(document);
+                await Context.SaveChangesAsync();
+                await Context.Database.CommitTransactionAsync();
+                return Ok(GenericResponseDto<object>.ToSuccess("Documento cadastrado com sucesso", document));
+            }
+            catch (Exception ex)
+            {
+                await Context.Database.RollbackTransactionAsync();
+                return BadRequest(GenericResponseDto<object>.ToException(ex));
+            }
         }
 
         [HttpPost("Generate")]
@@ -103,7 +145,7 @@ namespace Psycheflow.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetDocumentById([FromRoute] Guid id)
         {
-            Document? document = await Context.Documents.FirstOrDefaultAsync(x => x.Id == id);
+            Document? document = await Context.Documents.Include(x => x.Fields).FirstOrDefaultAsync(x => x.Id == id);
             if (document is null)
             {
                 return BadRequest(GenericResponseDto<object>.ToFail($"Documento com o Id {id} não encontrado"));

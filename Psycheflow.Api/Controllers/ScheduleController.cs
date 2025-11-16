@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Psycheflow.Api.Contexts;
 using Psycheflow.Api.Dtos.Requests.Schedule;
 using Psycheflow.Api.Dtos.Responses;
@@ -40,6 +41,16 @@ namespace Psycheflow.Api.Controllers
                 return BadRequest(genericResponseDto);
             }
             return Ok(genericResponseDto);
+        }
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            Schedule? schedule = await Context.Schedules.FirstOrDefaultAsync(x => x.Id == id);
+            if(schedule is null)
+            {
+                return NotFound("Agendamento não encontrado");
+            }
+            return Ok(GenericResponseDto<object>.ToSuccess("Agendamento encontrado",schedule));
         }
     }
 }
